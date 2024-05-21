@@ -2,24 +2,27 @@ import type {FormikErrors, FormikHelpers} from 'formik';
 import {Field, Formik} from 'formik';
 import {FC, useState} from 'react';
 import {useRef} from 'react';
-import {Image, View} from 'react-native';
+import {Image, TouchableOpacity, View} from 'react-native';
 import {createStyles} from './styles';
 import type {FormValues, LoginProps} from './types';
 import validationSchema from './validationSchema';
 import {Button, Container, LoadingOverlay, Text, Title} from '../../components';
-import {useThemedStyles} from '../../hooks';
+import {useBoolean, useThemedStyles} from '../../hooks';
 import {ErrorFeedback, PasswordField, TextField} from '../../forms/fields';
 import loginLogo from '../../assets/images/logo.png';
 import {useSessionStore} from '../../state/session/slice.ts';
 import {useLogin} from '../../state/session/actions.tsx';
 import {users} from '../../constans/users.ts';
 import BooleanButtons from '../../components/BooleanButtons';
+import Accordion from '../../components/Accordion';
+import {GameControllerIcon} from '../../assets/icons';
 
 const initialValues: FormValues = {username: '', password: ''};
 
 const Login: FC<LoginProps> = () => {
   const [styles] = useThemedStyles(createStyles);
   const [userId, setUserId] = useState<number | undefined>(undefined);
+  const [expanded, setExpanded] = useBoolean(false);
   const {status} = useSessionStore();
   const {login} = useLogin();
   const handleSubmit = async (
@@ -51,10 +54,6 @@ const Login: FC<LoginProps> = () => {
   return (
     <Container accessibilityLabel="view-login-container">
       {status.isFetching && <LoadingOverlay />}
-      <View style={styles.image}>
-        <Image source={loginLogo} style={styles.logo} />
-      </View>
-      <Title style={styles.title}>Inicio de sessión</Title>
       <Formik
         onSubmit={handleSubmit}
         initialValues={initialValues}
@@ -63,13 +62,65 @@ const Login: FC<LoginProps> = () => {
         {({submitForm, dirty, status: state, setFieldValue}) => (
           <View style={styles.content}>
             <View style={styles.content}>
+              <Accordion
+                expanded={expanded}
+                setExpanded={setExpanded}
+                title={'Inicio de sessión'}
+                icon={<GameControllerIcon />}
+                containerStyle={{
+                  width: 200,
+                  marginVertical: 20,
+                  alignSelf: 'center',
+                  backgroundColor: undefined,
+                }}>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    minWidth: 200,
+                    alignSelf: 'center',
+                    marginTop: -30,
+                    padding: 5,
+                    borderBottomEndRadius: 25,
+                    borderBottomStartRadius: 25,
+                    borderTopWidth: 0,
+                    marginBottom: 10,
+                    backgroundColor: '#fff', // Cambia el color de fondo según sea necesario
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+
+                    elevation: 5,
+                  }}>
+                  {users.map(user => (
+                    <TouchableOpacity
+                      key={user.id}
+                      style={{
+                        borderTopWidth: 1,
+                        width: 200,
+                        paddingVertical: 2,
+                      }}
+                      onPress={() =>
+                        handleAutoComplete(setFieldValue, Number(user.id))
+                      }>
+                      <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
+                        {user.rol}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </Accordion>
+
               <Field
                 accessibilityLabel="txt-login-username"
                 component={TextField}
                 name="username"
                 config={{
-                  placeholder: 'Ingrese su email',
-                  label: 'Email',
+                  placeholder: 'Ingrese su correo electronico',
+                  label: 'Correo electronico',
                   returnKeyType: 'next',
                   keyboardType: 'email-address',
                 }}
@@ -106,20 +157,6 @@ const Login: FC<LoginProps> = () => {
                     justifyContent: 'center',
                     width: '100%',
                   }}
-                />
-              </View>
-              <View style={{width: '30%'}}>
-                <BooleanButtons
-                  options={users.map(user => (
-                    <Text key={user.id} style={{fontWeight: 'bold'}}>
-                      {user.rol}
-                    </Text>
-                  ))}
-                  label="Usuarios"
-                  onChange={(value: number) =>
-                    handleAutoComplete(setFieldValue, value)
-                  }
-                  value={userId}
                 />
               </View>
             </View>

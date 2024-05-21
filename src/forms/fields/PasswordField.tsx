@@ -6,6 +6,7 @@ import {useBoolean} from '../../hooks';
 import {TextInput} from '../../components';
 import {getFieldError} from '../utils';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {EyeIcon} from '../../assets/icons';
 
 const PasswordField: FC<DynamicFieldProps> = ({
   field,
@@ -24,11 +25,7 @@ const PasswordField: FC<DynamicFieldProps> = ({
       secureTextEntry={secureEntry}
       rightIcon={
         <Pressable onPress={setSecureEntry.toggle}>
-          {secureEntry ? (
-            <Icon name="eye-off" color="#000" />
-          ) : (
-            <Icon name="eye" color="#000" />
-          )}
+          {secureEntry ? <EyeIcon /> : <EyeIcon />}
         </Pressable>
       }
       errorMessage={getFieldError(form, field)}

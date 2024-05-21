@@ -19,4 +19,26 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 60,
   },
+  item: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: '#1380d9',
+    backgroundColor: '#58ec03',
+    borderRadius: 10,
+    margin: 8,
+    padding: 2,
+    height: 95,
+    width: 165,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10, // Bordes redondeados para las banderas
+    resizeMode: 'stretch',
+    borderWidth: 2,
+  },
+  imageHidden: {
+    backgroundColor: colors.white,
+  },
 });
